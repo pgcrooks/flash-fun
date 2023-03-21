@@ -1,7 +1,10 @@
-from flask import Flask, render_template
+import os
+
+from flask import Flask, redirect, render_template, request, session, url_for
 from markupsafe import escape
 
 app = Flask(__name__)
+app.secret_key = os.getenv("SECRET_KEY")
 
 class User:
     def __init__(self, username, group):
@@ -20,7 +23,9 @@ def get_all_users():
 
 @app.route("/")
 def index():
-    return "<p>Index Page</p>"
+    if "username" in session:
+        return f"Logged in as {session['username']}"
+    return "You are not logged in"
 
 @app.route("/user/<name>")
 def show_user_profile(name):
@@ -42,6 +47,23 @@ def me():
         "username": user.username,
         "group": user.group,
     }
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        session["username"] = request.form["username"]
+        return redirect(url_for('index'))
+    return '''
+        <form method="post">
+            <p><input type=text name=username>
+            <p><input type=submit value=Login>
+        </form>
+    '''
+
+@app.route("/logout")
+def logout():
+    session.pop("username", None)
+    return redirect(url_for("index"))
 
 @app.route("/all_users")
 def users():
