@@ -19,3 +19,7 @@ def show_post(post_id):
 def show_subpath(subpath):
     # show the subpath after /path/
     return f'Subpath {escape(subpath)}'
+
+@app.errorhandler(404)
+def page_not_found(error):
+    return render_template("page_not_found.html"), 404
