@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template
 from markupsafe import escape
 
 app = Flask(__name__)
@@ -9,11 +9,11 @@ def index():
 
 @app.route("/user/<name>")
 def show_user_profile(name):
-    return f"Hello {escape(name)}"
+    return render_template("hello.html", name=name)
 
 @app.route("/post/<int:post_id>")
 def show_post(post_id):
-    return f"Post {post_id}"
+    return render_template("post.html", post_id=post_id)
 
 @app.route('/path/<path:subpath>')
 def show_subpath(subpath):
